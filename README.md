@@ -1,2 +1,2 @@
 # Data-Structures
- A-Z Data Structures implementation by Nitin Gandhi
+ A-Z Data Structures and algorithms implementation by Nitin Gandhi
