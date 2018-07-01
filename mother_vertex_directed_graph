@@ -1,0 +1,153 @@
+#include<iostream>
+#include<vector>
+#include<list>
+#include<algorithm>
+using namespace std;
+
+class Graph{
+	private:
+		int size;
+		vector<int>* arr;
+		void DFSUtil(int v, bool* visited);
+		void DFSUtilNoPrint(int v, bool* visited);
+	public:
+		Graph(int s);
+		void addedge(int x, int y);
+		void showGraph();
+		void BFS(int s);
+		void DFS(int s);
+		void findMother();
+};
+
+Graph::Graph(int s){
+	size = s;
+	arr = new vector<int>[s];
+}
+
+void Graph::addedge(int x, int y){
+	arr[x].push_back(y);
+	//arr[y].push_back(x);
+}
+
+void Graph::showGraph(){
+	for(int i = 0; i < size; i++){
+		cout<<i<<" -> ";
+		for(int j = 0; j < arr[i].size(); j++){
+			cout<<arr[i][j]<<"  ";
+		}
+		cout<<endl;
+	}
+}
+
+void Graph::BFS(int s){
+	cout<<"BFS: ";
+	bool* visited = new bool[size];
+	for(int i = 0; i < size; i++){
+		visited[i] = false;
+	}
+	visited[s] = true;
+	list<int> q;
+	q.push_back(s);
+	vector<int>::iterator i;
+	
+	while(!q.empty()){
+		int k = q.front();
+		cout<<k<<"  ";
+		q.pop_front();
+		
+		for(i = arr[k].begin(); i != arr[k].end(); i++){
+			if(!visited[*i]){
+				visited[*i] = true;
+				q.push_back(*i);
+			}
+		}
+	}
+	
+}
+
+void Graph::DFS(int s){
+	bool* visited = new bool[size];
+	cout<<"DFS: ";
+	for(int i = 0; i < size; i++){
+		visited[i] = false;
+	}
+	
+	DFSUtil(s, visited);
+}
+
+void Graph::DFSUtil(int s, bool* visited){
+	visited[s] = true;
+	cout<<s<<"  ";
+	vector<int>::iterator i;
+	for(i = arr[s].begin(); i != arr[s].end(); i++){
+		if(!visited[*i]){
+			DFSUtil(*i, visited);
+		}
+	}
+}
+
+void Graph::DFSUtilNoPrint(int s, bool* visited){
+	visited[s] = true;
+	//cout<<s<<"  ";
+	vector<int>::iterator i;
+	for(i = arr[s].begin(); i != arr[s].end(); i++){
+		if(!visited[*i]){
+			DFSUtilNoPrint(*i, visited);
+		}
+	}
+}
+
+void Graph::findMother(){
+	
+	bool* visited = new bool[size];
+	
+	for(int i = 0; i < size; i++){
+		visited[i] = false;
+	}
+	int v = 0;
+	
+	for(int i = 0; i < size; i++){
+		if(!visited[i]){
+			DFSUtilNoPrint(i, visited);
+			v = i;
+		}
+	}
+	
+	for(int i = 0; i < size; i++){
+		visited[i] = false;
+	}
+	
+	DFSUtilNoPrint(v, visited);
+	for(int i = 0; i < size; i++){
+		if(!visited[i]){
+			cout<<"No mother vertex found!"<<endl;
+		}
+	}
+	cout<<"Mother Vertex is: "<<v<<endl;
+}
+
+int main(){
+	Graph g(5);
+	g.addedge(0, 1);
+	g.addedge(0, 4);
+	g.addedge(1, 2);
+	g.addedge(1, 3);
+	g.addedge(1, 4);
+	g.addedge(2, 3);
+	g.addedge(3, 4);
+	g.showGraph();
+	g.BFS(2);cout<<endl;
+	g.DFS(2);cout<<endl;
+	
+	Graph g1(7);
+    g1.addedge(0, 1);
+    g1.addedge(0, 2);
+    g1.addedge(1, 3);
+    g1.addedge(4, 1);
+    g1.addedge(6, 4);
+    g1.addedge(5, 6);
+    g1.addedge(5, 2);
+    g1.addedge(6, 0);
+	g1.findMother();
+	return 0;
+}
